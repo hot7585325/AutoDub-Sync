@@ -1,0 +1,136 @@
+[gd_scene load_steps=2 format=3 uid="uid://6gdv8dhgqrtw"]
+
+[ext_resource type="Script" uid="uid://bx4kg0wg015ve" path="res://scripts/views/MainView.gd" id="1_u4k2p"]
+
+[node name="MainView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_u4k2p")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.117647, 0.117647, 0.117647, 1)
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="TitleLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "AutoDub Sync - 多語系對齊工具"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBox"]
+layout_mode = 2
+
+[node name="HBoxVideo" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox/HBoxVideo"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "原始影片 (.mp4):"
+
+[node name="LineEdit" type="LineEdit" parent="VBox/HBoxVideo"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "請選擇影片檔案..."
+editable = false
+
+[node name="Button" type="Button" parent="VBox/HBoxVideo"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "瀏覽"
+
+[node name="HBoxSRT" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox/HBoxSRT"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "字幕檔 (.srt):"
+
+[node name="LineEdit" type="LineEdit" parent="VBox/HBoxSRT"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "請選擇字幕檔案..."
+editable = false
+
+[node name="Button" type="Button" parent="VBox/HBoxSRT"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "瀏覽"
+
+[node name="HBoxAudio" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox/HBoxAudio"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "音檔資料夾:"
+
+[node name="LineEdit" type="LineEdit" parent="VBox/HBoxAudio"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "請選擇包含 wav 的資料夾..."
+editable = false
+
+[node name="Button" type="Button" parent="VBox/HBoxAudio"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "瀏覽"
+
+[node name="HSeparator2" type="HSeparator" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="ProgressBar" type="ProgressBar" parent="VBox"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+step = 1.0
+
+[node name="BtnStart" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "開始處理 (Start Processing)"
+
+[node name="LogOutput" type="RichTextLabel" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
+theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
+bbcode_enabled = true
+text = "[color=#888888]等待操作...[/color]
+"
+scroll_following = true
+selection_enabled = true
+
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Open a File"
+initial_position = 2
+size = Vector2i(800, 500)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.mp4, *.mkv, *.avi ; Video Files", "*.srt ; Subtitle Files")
+use_native_dialog = true
