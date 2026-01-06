@@ -1,6 +1,24 @@
-[gd_scene load_steps=2 format=3 uid="uid://6gdv8dhgqrtw"]
+[gd_scene load_steps=4 format=3 uid="uid://6gdv8dhgqrtw"]
 
 [ext_resource type="Script" uid="uid://bx4kg0wg015ve" path="res://scripts/views/MainView.gd" id="1_u4k2p"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0.14, 0.14, 0.14, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.28, 0.28, 0.28, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_mode"]
 
 [node name="MainView" type="Control"]
 layout_mode = 3
@@ -11,16 +29,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_u4k2p")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="BG" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.117647, 0.117647, 0.117647, 1)
+color = Color(0.12, 0.12, 0.12, 1)
 
-[node name="VBox" type="VBoxContainer" parent="."]
+[node name="VBoxMain" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,106 +49,272 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 10
 
-[node name="TitleLabel" type="Label" parent="VBox"]
+[node name="Title" type="Label" parent="VBoxMain"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "AutoDub Sync - 多語系對齊工具"
+theme_override_font_sizes/font_size = 20
+text = "AutoDub Sync Pro"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="VBox"]
+[node name="TabContainer" type="TabContainer" parent="VBoxMain"]
 layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
 
-[node name="HBoxVideo" type="HBoxContainer" parent="VBox"]
+[node name="1_音訊預處理 (Audio)" type="MarginContainer" parent="VBoxMain/TabContainer"]
 layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_tab_index = 0
 
-[node name="Label" type="Label" parent="VBox/HBoxVideo"]
-custom_minimum_size = Vector2(100, 0)
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)"]
 layout_mode = 2
-text = "原始影片 (.mp4):"
+theme_override_constants/separation = 15
 
-[node name="LineEdit" type="LineEdit" parent="VBox/HBoxVideo"]
+[node name="LabelDesc" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+layout_mode = 2
+text = "步驟 1：將單一長音檔依照 TXT 文本內容，自動切割為對應行數的分檔 (001.wav, ...)"
+
+[node name="GridInputs" type="GridContainer" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+layout_mode = 2
+columns = 3
+
+[node name="Label" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "來源長音檔 (.wav):"
+
+[node name="LineAudioLong" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "請選擇影片檔案..."
+placeholder_text = "選擇要切割的音檔..."
 editable = false
 
-[node name="Button" type="Button" parent="VBox/HBoxVideo"]
-custom_minimum_size = Vector2(80, 0)
+[node name="BtnBrowseLong" type="Button" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
 layout_mode = 2
 text = "瀏覽"
 
-[node name="HBoxSRT" type="HBoxContainer" parent="VBox"]
+[node name="Label2" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
 layout_mode = 2
+text = "譯文文本 (.txt):"
 
-[node name="Label" type="Label" parent="VBox/HBoxSRT"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "字幕檔 (.srt):"
-
-[node name="LineEdit" type="LineEdit" parent="VBox/HBoxSRT"]
+[node name="LineTxt" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "請選擇字幕檔案..."
+placeholder_text = "選擇對應內容的文字檔 (一行一句)..."
 editable = false
 
-[node name="Button" type="Button" parent="VBox/HBoxSRT"]
-custom_minimum_size = Vector2(80, 0)
+[node name="BtnBrowseTxt" type="Button" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
 layout_mode = 2
 text = "瀏覽"
 
-[node name="HBoxAudio" type="HBoxContainer" parent="VBox"]
+[node name="Label3" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
 layout_mode = 2
+text = "輸出資料夾:"
 
-[node name="Label" type="Label" parent="VBox/HBoxAudio"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "音檔資料夾:"
-
-[node name="LineEdit" type="LineEdit" parent="VBox/HBoxAudio"]
+[node name="LineOutDir" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "請選擇包含 wav 的資料夾..."
+placeholder_text = "選擇切割後存放位置..."
 editable = false
 
-[node name="Button" type="Button" parent="VBox/HBoxAudio"]
-custom_minimum_size = Vector2(80, 0)
+[node name="BtnBrowseOutDir" type="Button" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
 layout_mode = 2
 text = "瀏覽"
 
-[node name="HSeparator2" type="HSeparator" parent="VBox"]
+[node name="HSeparator" type="HSeparator" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+layout_mode = 2
+
+[node name="LabelParams" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+text = "切割參數調整 (Parameter Tuning)"
+
+[node name="HBoxParams" type="HBoxContainer" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+layout_mode = 2
+
+[node name="LabelC" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/HBoxParams"]
+layout_mode = 2
+text = "逗號停頓權重:"
+
+[node name="SpinComma" type="SpinBox" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/HBoxParams"]
+layout_mode = 2
+step = 0.1
+value = 1.5
+
+[node name="VSeparator" type="VSeparator" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/HBoxParams"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="ProgressBar" type="ProgressBar" parent="VBox"]
-custom_minimum_size = Vector2(0, 30)
+[node name="LabelP" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/HBoxParams"]
 layout_mode = 2
-step = 1.0
+text = "句號停頓權重:"
 
-[node name="BtnStart" type="Button" parent="VBox"]
-custom_minimum_size = Vector2(0, 50)
+[node name="SpinPeriod" type="SpinBox" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/HBoxParams"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "開始處理 (Start Processing)"
+step = 0.1
+value = 3.0
 
-[node name="LogOutput" type="RichTextLabel" parent="VBox"]
+[node name="Control" type="Control" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
-focus_mode = 2
-theme_override_colors/default_color = Color(0.8, 0.8, 0.8, 1)
+
+[node name="BtnSplitStart" type="Button" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "執行音訊切割 (Generate Split Files)"
+
+[node name="2_影片對齊 (Video)" type="MarginContainer" parent="VBoxMain/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_tab_index = 1
+
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LabelDesc" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
+layout_mode = 2
+text = "步驟 2：輸入影片、字幕，選擇「依據音檔」或「依據譯文SRT」進行畫面變速。"
+
+[node name="InfoPanel" type="PanelContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_info")
+
+[node name="HBoxInfo" type="HBoxContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="LblSRT" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
+layout_mode = 2
+text = "SRT 行數: -"
+
+[node name="LblTXT" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
+layout_mode = 2
+text = "TXT 行數: -"
+
+[node name="LblAudio" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
+layout_mode = 2
+text = "音檔數量: -"
+
+[node name="LblStatus" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
+layout_mode = 2
+text = "狀態: 待命"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
+layout_mode = 2
+
+[node name="LabelMode" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+text = "選擇同步基準 (Sync Reference)"
+
+[node name="HBoxMode" type="HBoxContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="CheckBox_Audio" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxMode"]
+layout_mode = 2
+button_pressed = true
+button_group = SubResource("ButtonGroup_mode")
+text = "依照音訊時長 (By Audio Folder)"
+
+[node name="CheckBox_SRT" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxMode"]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_mode")
+text = "依照譯文 SRT 時長 (By Translated SRT)"
+
+[node name="GridInputs" type="GridContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="Label" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "影片 (.mp4):"
+
+[node name="LineVideo" type="LineEdit" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+size_flags_horizontal = 3
+editable = false
+
+[node name="BtnVideo" type="Button" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+text = "瀏覽"
+
+[node name="Label2" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+text = "原文 SRT:"
+
+[node name="LineSRT" type="LineEdit" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+size_flags_horizontal = 3
+editable = false
+
+[node name="BtnSRT" type="Button" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+text = "瀏覽"
+
+[node name="Label3" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+text = "音檔資料夾:"
+
+[node name="LineAudioFolder" type="LineEdit" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+size_flags_horizontal = 3
+editable = false
+
+[node name="BtnAudioFolder" type="Button" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+text = "瀏覽"
+
+[node name="Label4" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+text = "譯文 SRT:"
+
+[node name="LineTransSRT" type="LineEdit" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+size_flags_horizontal = 3
+editable = false
+
+[node name="BtnTransSRT" type="Button" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+layout_mode = 2
+text = "瀏覽"
+
+[node name="Control" type="Control" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BtnSyncStart" type="Button" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+disabled = true
+text = "開始合成 (Start Sync)"
+
+[node name="ProgressBar" type="ProgressBar" parent="VBoxMain"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="LogOutput" type="RichTextLabel" parent="VBoxMain"]
+layout_mode = 2
+size_flags_vertical = 3
 bbcode_enabled = true
-text = "[color=#888888]等待操作...[/color]
-"
 scroll_following = true
-selection_enabled = true
 
 [node name="FileDialog" type="FileDialog" parent="."]
 title = "Open a File"
-initial_position = 2
-size = Vector2i(800, 500)
+size = Vector2i(600, 400)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
-filters = PackedStringArray("*.mp4, *.mkv, *.avi ; Video Files", "*.srt ; Subtitle Files")
 use_native_dialog = true

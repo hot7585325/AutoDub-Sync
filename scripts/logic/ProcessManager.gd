@@ -1,8 +1,6 @@
-# res://scripts/logic/ProcessManager.gd
 class_name ProcessManager
 extends Node
 
-# 定義信號與 UI 溝通
 signal log_updated(msg: String)
 signal progress_updated(value: float, total: float)
 signal processing_finished(success: bool)
@@ -10,142 +8,175 @@ signal processing_finished(success: bool)
 var _thread: Thread
 var _data: ProjectData
 
-# FFmpeg 執行檔路徑 (假設放在專案目錄或系統環境變數)
 const FFMPEG_CMD = "ffmpeg" 
 const FFPROBE_CMD = "ffprobe"
 
+const TARGET_RES = "1920:1080"
+const TARGET_FPS = "30"
+const TARGET_AR = "44100"
+
 func start_processing(data: ProjectData):
-	if _thread and _thread.is_started():
-		return # 防止重複執行
-	
+	if _thread and _thread.is_started(): return
 	_data = data
 	_thread = Thread.new()
-	# 在背景執行 _run_thread 函式
 	_thread.start(_run_task)
 
-# --- 以下在背景執行緒運行，不可直接碰 UI ---
 func _run_task():
-	_log("開始處理...")
+	_log("=== 開始合成 ===")
 	
-	# 1. 建立臨時工作目錄 (解決中文路徑問題的關鍵)
+	# 1. 準備 Temp
 	var temp_dir = "user://temp_work/"
 	var dir = DirAccess.open("user://")
-	if dir.dir_exists("temp_work"):
-		# 簡單清理 (實際專案要遞迴刪除)
-		pass 
-	else:
-		dir.make_dir("temp_work")
-		
-	# 2. 將素材複製到 Temp 並改名為英文
-	# 這一步是為了確保 FFmpeg 不會因為路徑亂碼而失敗
-	var safe_video = ProjectSettings.globalize_path(temp_dir + "source.mp4")
-	var safe_list_txt = ProjectSettings.globalize_path(temp_dir + "list.txt")
+	if not dir.dir_exists("temp_work"): dir.make_dir("temp_work")
 	
-	dir.copy(_data.video_path, temp_dir + "source.mp4")
-	_log("已複製影片到臨時區")
+	# 2. 複製來源影片
+	var safe_video_path = temp_dir + "source.mp4"
+	dir.copy(_data.video_path, safe_video_path)
+	var abs_video = ProjectSettings.globalize_path(safe_video_path)
+	var total_video_dur = _get_duration(abs_video)
 
-	# 3. 解析 SRT
-	var subtitles = SRTParser.parse(_data.srt_path)
-	_log("解析出 %d 句字幕" % subtitles.size())
+	# 3. 解析字幕
+	var source_subs = SRTParser.parse(_data.srt_path)
+	_log("載入原文 SRT: %d 句" % source_subs.size())
 	
-	var concat_list_content = ""
-	var file_idx = 1
-	
-	# 4. 迴圈處理每一句
-	for sub in subtitles:
-		call_deferred("emit_signal", "progress_updated", file_idx, subtitles.size())
-		
-		# A. 計算原始時長
-		var original_dur = sub.end_time - sub.start_time
-		
-		# B. 獲取對應音檔時長 (假設命名為 001.wav, 002.wav...)
-		# 注意：這裡需要補零邏輯
-		var wav_name = "%03d.wav" % sub.index
-		var wav_path = _data.audio_folder_path.path_join(wav_name)
-		
-		# 檢查音檔是否存在
-		if not FileAccess.file_exists(wav_path):
-			_log("錯誤：找不到音檔 " + wav_name)
-			file_idx += 1
-			continue
-			
-		var target_dur = _get_audio_duration(wav_path)
-		
-		# C. 計算縮放倍率
-		# 如果目標音檔是 5秒，原片是 2秒，倍率 = 2.5 (變慢/拉長)
-		var speed_factor = target_dur / original_dur
-		
-		# D. 生成單句影片片段
-		var chunk_name = "chunk_%03d.mp4" % sub.index
-		var chunk_path = ProjectSettings.globalize_path(temp_dir + chunk_name)
-		
-		# 組裝 FFmpeg 指令
-		# 1. 切割 (-ss -t)
-		# 2. 變速 (setpts)
-		# 3. 強制統一格式 (scale, fps) 避免 concat 失敗
-		# 4. 替換音訊 (-i wav -map...)
-		
-		var cmd_args = [
-			"-y",
-			"-ss", str(sub.start_time),
-			"-t", str(original_dur),
-			"-i", safe_video,
-			"-i", wav_path,
-			"-filter_complex", 
-			"[0:v]setpts=PTS*%.5f,scale=1920:1080,fps=30[v]" % speed_factor,
-			"-map", "[v]", 
-			"-map", "1:a", # 使用 wav 的音訊
-			"-shortest",   # 以最短的流為準
-			chunk_path
-		]
-		
-		var output = []
-		OS.execute(FFMPEG_CMD, cmd_args, output, true)
-		
-		# 寫入 concat 列表
-		# 注意：ffmpeg concat 需要 'file path' 格式，Windows 路徑要轉義
-		concat_list_content += "file '%s'\n" % chunk_path
-		
-		_log("已處理片段: " + chunk_name + " (倍率: %.2f)" % speed_factor)
-		file_idx += 1
+	# [新增] 若為 SRT 模式，解析譯文 SRT
+	var target_subs_map = {}
+	if _data.sync_mode == ProjectData.SyncMode.BY_SRT:
+		var t_subs = SRTParser.parse(_data.trans_srt_path)
+		for ts in t_subs:
+			target_subs_map[ts.index] = ts.end_time - ts.start_time
+		_log("載入譯文 SRT: %d 句" % t_subs.size())
 
-	# 5. 執行合併 (Concat)
-	var list_file = FileAccess.open(temp_dir + "list.txt", FileAccess.WRITE)
-	list_file.store_string(concat_list_content)
-	list_file.close()
+	var concat_str = ""
+	var last_end = 0.0
+	var idx = 1
 	
-	var final_output = _data.output_path
-	if final_output.is_empty():
-		final_output = _data.video_path.get_base_dir().path_join("output_synced.mp4")
+	for sub in source_subs:
+		call_deferred("emit_signal", "progress_updated", idx, source_subs.size())
+		
+		# --- A. 間隙 (Gap) ---
+		var gap_dur = sub.start_time - last_end
+		if gap_dur > 0.1:
+			var gap_p = ProjectSettings.globalize_path(temp_dir + "gap_%03d.mp4" % sub.index)
+			# 保留間隙，強制轉碼
+			var args = ["-y", "-ss", str(last_end), "-t", str(gap_dur), "-i", abs_video,
+				"-vf", "scale=%s,fps=%s,setsar=1" % [TARGET_RES, TARGET_FPS],
+				"-ar", TARGET_AR, "-c:v", "libx264", "-preset", "ultrafast", "-c:a", "aac", gap_p]
+			OS.execute(FFMPEG_CMD, args, [], true)
+			concat_str += "file '%s'\n" % gap_p
 
-	var concat_args = [
-		"-y",
-		"-f", "concat",
-		"-safe", "0",
-		"-i", safe_list_txt,
-		"-c", "copy", # 直接複製流，不重新編碼，極快
-		final_output
-	]
+		# --- B. 字幕段落 ---
+		var orig_dur = sub.end_time - sub.start_time
+		if orig_dur <= 0: orig_dur = 0.1
+		
+		var target_dur = orig_dur
+		var has_audio = false
+		var wav_path = ""
+		
+		# 判斷目標時長來源
+		if _data.sync_mode == ProjectData.SyncMode.BY_AUDIO:
+			# 模式 A: 找音檔
+			for ext in ["wav", "mp3"]:
+				var try = _data.audio_folder_path.path_join("%03d.%s" % [sub.index, ext])
+				if FileAccess.file_exists(try):
+					wav_path = try
+					has_audio = true
+					break
+			if has_audio:
+				target_dur = _get_duration(ProjectSettings.globalize_path(wav_path))
+			else:
+				_log("警告: 第 %d 句無音檔，維持原速" % sub.index)
+				
+		elif _data.sync_mode == ProjectData.SyncMode.BY_SRT:
+			# 模式 B: 找譯文 SRT
+			if target_subs_map.has(sub.index):
+				target_dur = target_subs_map[sub.index]
+			# 注意：此模式預設無音訊流，除非你有額外邏輯去掛載音檔
+
+		# 生成片段
+		var speed = target_dur / orig_dur
+		var chunk_p = ProjectSettings.globalize_path(temp_dir + "chunk_%03d.mp4" % sub.index)
+		
+		var args = ["-y", "-ss", str(sub.start_time), "-t", str(orig_dur), "-i", abs_video]
+		var filter = "[0:v]setpts=PTS*%.5f,scale=%s,fps=%s,setsar=1[v]" % [speed, TARGET_RES, TARGET_FPS]
+		
+		if has_audio:
+			# 有音檔：混音
+			args.append("-i")
+			args.append(ProjectSettings.globalize_path(wav_path))
+			args.append("-filter_complex")
+			args.append(filter)
+			args.append("-map")
+			args.append("[v]")
+			args.append("-map")
+			args.append("1:a")
+			args.append("-ar")
+			args.append(TARGET_AR)
+			args.append("-c:v")
+			args.append("libx264")
+			args.append("-preset")
+			args.append("ultrafast")
+			args.append("-c:a")
+			args.append("aac")
+		else:
+			# 無音檔：生成靜音 (避免 concat 錯誤)
+			args.append("-f")
+			args.append("lavfi")
+			args.append("-i")
+			args.append("anullsrc=channel_layout=stereo:sample_rate=%s" % TARGET_AR)
+			args.append("-filter_complex")
+			args.append(filter)
+			args.append("-map")
+			args.append("[v]")
+			args.append("-map")
+			args.append("1:a")
+			args.append("-shortest")
+			args.append("-c:v")
+			args.append("libx264")
+			args.append("-preset")
+			args.append("ultrafast")
+			args.append("-c:a")
+			args.append("aac")
+
+		args.append(chunk_p)
+		OS.execute(FFMPEG_CMD, args, [], true)
+		concat_str += "file '%s'\n" % chunk_p
+		
+		last_end = sub.end_time
+		idx += 1
+
+	# 4. 片尾
+	var tail_dur = total_video_dur - last_end
+	if tail_dur > 0.2:
+		var tail_p = ProjectSettings.globalize_path(temp_dir + "tail.mp4")
+		var args = ["-y", "-ss", str(last_end), "-t", str(tail_dur), "-i", abs_video,
+			"-vf", "scale=%s,fps=%s,setsar=1" % [TARGET_RES, TARGET_FPS],
+			"-ar", TARGET_AR, "-c:v", "libx264", "-preset", "ultrafast", "-c:a", "aac", tail_p]
+		OS.execute(FFMPEG_CMD, args, [], true)
+		concat_str += "file '%s'\n" % tail_p
 	
-	_log("正在合併檔案...")
-	OS.execute(FFMPEG_CMD, concat_args, [], true)
+	# 5. 合併
+	var list_p = ProjectSettings.globalize_path(temp_dir + "list.txt")
+	var f = FileAccess.open(temp_dir + "list.txt", FileAccess.WRITE)
+	f.store_string(concat_str)
+	f.close()
 	
-	_log("完成！輸出檔案：" + final_output)
+	var final_out = _data.output_path
+	if final_out.is_empty():
+		final_out = _data.video_path.get_base_dir().path_join("output_synced.mp4")
+	
+	OS.execute(FFMPEG_CMD, ["-y", "-f", "concat", "-safe", "0", "-i", list_p, "-c", "copy", final_out], [], true)
+	_log("✅ 完成: " + final_out)
 	call_deferred("emit_signal", "processing_finished", true)
 
-func _get_audio_duration(path: String) -> float:
-	# 使用 ffprobe 快速獲取時長
-	var output = []
-	var args = ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path]
-	OS.execute(FFPROBE_CMD, args, output, true)
-	if output.size() > 0:
-		return output[0].strip_edges().to_float()
-	return 1.0
+func _get_duration(path):
+	var out = []
+	OS.execute(FFPROBE_CMD, ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path], out, true)
+	if out.size() > 0: return out[0].strip_edges().to_float()
+	return 0.0
 
-func _log(msg: String):
-	# 使用 call_deferred 安全地呼叫主執行緒的信號
+func _log(msg):
 	call_deferred("emit_signal", "log_updated", msg)
 
 func _exit_tree():
-	if _thread and _thread.is_started():
-		_thread.wait_to_finish()
+	if _thread and _thread.is_started(): _thread.wait_to_finish()
