@@ -1,6 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://6gdv8dhgqrtw"]
+[gd_scene load_steps=5 format=3 uid="uid://6gdv8dhgqrtw"]
 
 [ext_resource type="Script" uid="uid://bx4kg0wg015ve" path="res://scripts/views/MainView.gd" id="1_u4k2p"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2, 0.23, 0.26, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info"]
 content_margin_left = 10.0
@@ -53,6 +64,7 @@ theme_override_constants/separation = 10
 
 [node name="Title" type="Label" parent="VBoxMain"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
 theme_override_font_sizes/font_size = 20
 text = "AutoDub Sync Pro"
 horizontal_alignment = 1
@@ -62,112 +74,129 @@ layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="1_音訊預處理 (Audio)" type="MarginContainer" parent="VBoxMain/TabContainer"]
+[node name="0_文字對齊 (Aligner)" type="MarginContainer" parent="VBoxMain/TabContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
 metadata/_tab_index = 0
 
-[node name="VBox" type="VBoxContainer" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)"]
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HBoxInfo" type="HBoxContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="LabelDesc" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+[node name="LabelSRTCount" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxInfo"]
 layout_mode = 2
-text = "步驟 1：將單一長音檔依照 TXT 文本內容，自動切割為對應行數的分檔 (001.wav, ...)"
+text = "SRT 行數: 0"
 
-[node name="GridInputs" type="GridContainer" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+[node name="VSeparator" type="VSeparator" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxInfo"]
 layout_mode = 2
-columns = 3
 
-[node name="Label" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
+[node name="LabelTxtCount" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxInfo"]
+layout_mode = 2
+text = "譯文 行數: 0"
+
+[node name="VSeparator2" type="VSeparator" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxInfo"]
+layout_mode = 2
+
+[node name="LabelStatus" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxInfo"]
+layout_mode = 2
+text = "狀態: 等待載入"
+
+[node name="HBoxTools" type="HBoxContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnLoadSRT" type="Button" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxTools"]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-text = "來源長音檔 (.wav):"
+text = "1. 載入原文 SRT"
 
-[node name="LineAudioLong" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
+[node name="BtnLoadTXT" type="Button" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxTools"]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "選擇要切割的音檔..."
-editable = false
+text = "2. 載入譯文 TXT"
 
-[node name="BtnBrowseLong" type="Button" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
-layout_mode = 2
-text = "瀏覽"
-
-[node name="Label2" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
-layout_mode = 2
-text = "譯文文本 (.txt):"
-
-[node name="LineTxt" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "選擇對應內容的文字檔 (一行一句)..."
-editable = false
-
-[node name="BtnBrowseTxt" type="Button" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
-layout_mode = 2
-text = "瀏覽"
-
-[node name="Label3" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
-layout_mode = 2
-text = "輸出資料夾:"
-
-[node name="LineOutDir" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "選擇切割後存放位置..."
-editable = false
-
-[node name="BtnBrowseOutDir" type="Button" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/GridInputs"]
-layout_mode = 2
-text = "瀏覽"
-
-[node name="HSeparator" type="HSeparator" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+[node name="VSeparator" type="VSeparator" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxTools"]
 layout_mode = 2
 
-[node name="LabelParams" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+[node name="BtnAutoSplit" type="Button" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxTools"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
-text = "切割參數調整 (Parameter Tuning)"
+theme_override_colors/font_color = Color(0.6, 1, 0.6, 1)
+text = "⚡ 自動依標點斷行"
 
-[node name="HBoxParams" type="HBoxContainer" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+[node name="BtnSave" type="Button" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxTools"]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+text = "3. 儲存結果"
 
-[node name="LabelC" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/HBoxParams"]
+[node name="PanelRules" type="PanelContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox"]
 layout_mode = 2
-text = "逗號停頓權重:"
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
-[node name="SpinComma" type="SpinBox" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/HBoxParams"]
-layout_mode = 2
-step = 0.1
-value = 1.5
-
-[node name="VSeparator" type="VSeparator" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/HBoxParams"]
+[node name="HBoxRules" type="HBoxContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="LabelP" type="Label" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/HBoxParams"]
+[node name="Label" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules"]
 layout_mode = 2
-text = "句號停頓權重:"
+text = "斷行規則設定:"
 
-[node name="SpinPeriod" type="SpinBox" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox/HBoxParams"]
+[node name="HBoxRules" type="HBoxContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules"]
 layout_mode = 2
-step = 0.1
-value = 3.0
+theme_override_constants/separation = 15
 
-[node name="Control" type="Control" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
+[node name="ChkPeriod" type="CheckBox" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules/HBoxRules"]
+layout_mode = 2
+button_pressed = true
+text = "句號/問號/驚嘆號 (。?! )"
+
+[node name="ChkComma" type="CheckBox" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules/HBoxRules"]
+layout_mode = 2
+text = "逗號/頓號 (，、, )"
+
+[node name="ChkSpace" type="CheckBox" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules/HBoxRules"]
+layout_mode = 2
+text = "空格 (Space)"
+
+[node name="HBoxEditors" type="HBoxContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 10
 
-[node name="BtnSplitStart" type="Button" parent="VBoxMain/TabContainer/1_音訊預處理 (Audio)/VBox"]
-custom_minimum_size = Vector2(0, 50)
+[node name="VBoxLeft" type="VBoxContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxEditors"]
 layout_mode = 2
-text = "執行音訊切割 (Generate Split Files)"
+size_flags_horizontal = 3
 
-[node name="2_影片對齊 (Video)" type="MarginContainer" parent="VBoxMain/TabContainer"]
+[node name="Label" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxEditors/VBoxLeft"]
+layout_mode = 2
+text = "原文 SRT (參考用)"
+
+[node name="TextSRT" type="TextEdit" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxEditors/VBoxLeft"]
+layout_mode = 2
+size_flags_vertical = 3
+editable = false
+wrap_mode = 1
+
+[node name="VBoxRight" type="VBoxContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxEditors"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxEditors/VBoxRight"]
+layout_mode = 2
+text = "譯文 TXT (請編輯直到行數匹配)"
+
+[node name="TextTXT" type="TextEdit" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxEditors/VBoxRight"]
+layout_mode = 2
+size_flags_vertical = 3
+wrap_mode = 1
+
+[node name="1_音訊切割 (Audio)" type="MarginContainer" parent="VBoxMain/TabContainer"]
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 20
@@ -176,13 +205,125 @@ theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 metadata/_tab_index = 1
 
+[node name="VBox" type="VBoxContainer" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="LabelStep" type="Label" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox"]
+layout_mode = 2
+text = "步驟：將長音檔依照 TXT 權重，切割為獨立音檔。"
+
+[node name="GridInputs" type="GridContainer" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="Label" type="Label" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "長音檔:"
+
+[node name="LineAudioLong" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "選擇 .wav / .mp3"
+editable = false
+
+[node name="BtnBrowseLong" type="Button" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+layout_mode = 2
+text = "瀏覽"
+
+[node name="Label2" type="Label" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+layout_mode = 2
+text = "對齊TXT:"
+
+[node name="LineTxt" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "選擇已對齊的 .txt"
+editable = false
+
+[node name="BtnBrowseTxt" type="Button" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+layout_mode = 2
+text = "瀏覽"
+
+[node name="Label3" type="Label" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+layout_mode = 2
+text = "輸出位置:"
+
+[node name="LineOutDir" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "選擇切割後存放的資料夾"
+editable = false
+
+[node name="BtnBrowseOutDir" type="Button" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+layout_mode = 2
+text = "瀏覽"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox"]
+layout_mode = 2
+
+[node name="LabelParams" type="Label" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+text = "演算參數 (Parameters)"
+
+[node name="HBoxParams" type="HBoxContainer" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="OptionLang" type="OptionButton" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/HBoxParams"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/HBoxParams"]
+layout_mode = 2
+
+[node name="LabelC" type="Label" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/HBoxParams"]
+layout_mode = 2
+text = "逗號權重:"
+
+[node name="SpinComma" type="SpinBox" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/HBoxParams"]
+layout_mode = 2
+step = 0.1
+value = 1.5
+
+[node name="LabelP" type="Label" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/HBoxParams"]
+layout_mode = 2
+text = "句號權重:"
+
+[node name="SpinPeriod" type="SpinBox" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/HBoxParams"]
+layout_mode = 2
+step = 0.1
+value = 3.0
+
+[node name="Control" type="Control" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BtnSplitStart" type="Button" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "執行切割 (Generate WAVs)"
+
+[node name="BtnExportXML" type="Button" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox"]
+layout_mode = 2
+text = "僅匯出 XML (給 Premiere / Final Cut 修正用)"
+
+[node name="2_影片對齊 (Video)" type="MarginContainer" parent="VBoxMain/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_tab_index = 2
+
 [node name="VBox" type="VBoxContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)"]
 layout_mode = 2
 theme_override_constants/separation = 10
-
-[node name="LabelDesc" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
-layout_mode = 2
-text = "步驟 2：輸入影片、字幕，選擇「依據音檔」或「依據譯文SRT」進行畫面變速。"
 
 [node name="InfoPanel" type="PanelContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
 layout_mode = 2
@@ -195,42 +336,35 @@ alignment = 1
 
 [node name="LblSRT" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
 layout_mode = 2
-text = "SRT 行數: -"
-
-[node name="LblTXT" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
-layout_mode = 2
-text = "TXT 行數: -"
+text = "SRT: -"
 
 [node name="LblAudio" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
 layout_mode = 2
-text = "音檔數量: -"
+text = "Audio: -"
 
 [node name="LblStatus" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
 layout_mode = 2
-text = "狀態: 待命"
-
-[node name="HSeparator" type="HSeparator" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
-layout_mode = 2
+text = "Status: -"
 
 [node name="LabelMode" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
-text = "選擇同步基準 (Sync Reference)"
+text = "同步基準 (Sync Reference)"
 
 [node name="HBoxMode" type="HBoxContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 30
 
-[node name="CheckBox_Audio" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxMode"]
+[node name="ChkAudio" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxMode"]
 layout_mode = 2
 button_pressed = true
 button_group = SubResource("ButtonGroup_mode")
-text = "依照音訊時長 (By Audio Folder)"
+text = "依音訊時長 (By Audio)"
 
-[node name="CheckBox_SRT" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxMode"]
+[node name="ChkSRT" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxMode"]
 layout_mode = 2
 button_group = SubResource("ButtonGroup_mode")
-text = "依照譯文 SRT 時長 (By Translated SRT)"
+text = "依譯文SRT時長 (By SRT)"
 
 [node name="GridInputs" type="GridContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
 layout_mode = 2
@@ -241,7 +375,7 @@ columns = 3
 [node name="Label" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-text = "影片 (.mp4):"
+text = "影片:"
 
 [node name="LineVideo" type="LineEdit" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
 layout_mode = 2
@@ -285,11 +419,40 @@ text = "譯文 SRT:"
 [node name="LineTransSRT" type="LineEdit" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
 layout_mode = 2
 size_flags_horizontal = 3
+placeholder_text = "(僅限SRT模式使用)"
 editable = false
 
 [node name="BtnTransSRT" type="Button" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
 layout_mode = 2
 text = "瀏覽"
+
+[node name="LabelSettings" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+text = "畫質設定 (Settings)"
+
+[node name="HBoxSettings" type="HBoxContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="LabelFPS" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxSettings"]
+layout_mode = 2
+text = "目標 FPS:"
+
+[node name="SpinFPS" type="SpinBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxSettings"]
+layout_mode = 2
+min_value = 24.0
+max_value = 144.0
+value = 60.0
+rounded = true
+suffix = "fps"
+
+[node name="VSeparator" type="VSeparator" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxSettings"]
+layout_mode = 2
+
+[node name="ChkFlow" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxSettings"]
+layout_mode = 2
+text = "啟用 AI 補幀 (Optical Flow)"
 
 [node name="Control" type="Control" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
 layout_mode = 2
