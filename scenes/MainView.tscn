@@ -91,6 +91,7 @@ layout_mode = 2
 theme_override_constants/separation = 15
 
 [node name="LabelSRTCount" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxInfo"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "SRT 行數: 0"
 
@@ -98,6 +99,7 @@ text = "SRT 行數: 0"
 layout_mode = 2
 
 [node name="LabelTxtCount" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxInfo"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "譯文 行數: 0"
 
@@ -105,6 +107,7 @@ text = "譯文 行數: 0"
 layout_mode = 2
 
 [node name="LabelStatus" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxInfo"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "狀態: 等待載入"
 
@@ -128,7 +131,7 @@ layout_mode = 2
 [node name="BtnAutoSplit" type="Button" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxTools"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 1, 0.6, 1)
-text = "⚡ 自動依標點斷行"
+text = "⚡ 執行斷行"
 
 [node name="BtnSave" type="Button" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxTools"]
 custom_minimum_size = Vector2(120, 0)
@@ -145,24 +148,14 @@ theme_override_constants/separation = 20
 
 [node name="Label" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules"]
 layout_mode = 2
-text = "斷行規則設定:"
+text = "斷行符號設定 (輸入字串):"
 
-[node name="HBoxRules" type="HBoxContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules"]
+[node name="LineSplitChars" type="LineEdit" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="ChkPeriod" type="CheckBox" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules/HBoxRules"]
-layout_mode = 2
-button_pressed = true
-text = "句號/問號/驚嘆號 (。?! )"
-
-[node name="ChkComma" type="CheckBox" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules/HBoxRules"]
-layout_mode = 2
-text = "逗號/頓號 (，、, )"
-
-[node name="ChkSpace" type="CheckBox" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/PanelRules/HBoxRules/HBoxRules"]
-layout_mode = 2
-text = "空格 (Space)"
+size_flags_horizontal = 3
+text = "。！？…!?"
+placeholder_text = "在此輸入所有視為斷行的符號"
 
 [node name="HBoxEditors" type="HBoxContainer" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox"]
 layout_mode = 2
@@ -175,9 +168,10 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxEditors/VBoxLeft"]
 layout_mode = 2
-text = "原文 SRT (參考用)"
+text = "原文 SRT (參考用，點擊反白)"
 
 [node name="TextSRT" type="TextEdit" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxEditors/VBoxLeft"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 editable = false
@@ -189,11 +183,13 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxEditors/VBoxRight"]
 layout_mode = 2
-text = "譯文 TXT (請編輯直到行數匹配)"
+text = "譯文 TXT (右鍵翻譯，點擊反白)"
 
 [node name="TextTXT" type="TextEdit" parent="VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxEditors/VBoxRight"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+context_menu_enabled = false
 wrap_mode = 1
 
 [node name="1_音訊切割 (Audio)" type="MarginContainer" parent="VBoxMain/TabContainer"]
@@ -211,7 +207,7 @@ theme_override_constants/separation = 15
 
 [node name="LabelStep" type="Label" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox"]
 layout_mode = 2
-text = "步驟：將長音檔依照 TXT 權重，切割為獨立音檔。"
+text = "步驟：自動去頭去尾 -> 依照 TXT 權重切割。"
 
 [node name="GridInputs" type="GridContainer" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox"]
 layout_mode = 2
@@ -225,6 +221,7 @@ layout_mode = 2
 text = "長音檔:"
 
 [node name="LineAudioLong" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "選擇 .wav / .mp3"
@@ -239,6 +236,7 @@ layout_mode = 2
 text = "對齊TXT:"
 
 [node name="LineTxt" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "選擇已對齊的 .txt"
@@ -253,6 +251,7 @@ layout_mode = 2
 text = "輸出位置:"
 
 [node name="LineOutDir" type="LineEdit" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/GridInputs"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "選擇切割後存放的資料夾"
@@ -275,6 +274,7 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="OptionLang" type="OptionButton" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/HBoxParams"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 
@@ -286,6 +286,7 @@ layout_mode = 2
 text = "逗號權重:"
 
 [node name="SpinComma" type="SpinBox" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/HBoxParams"]
+unique_name_in_owner = true
 layout_mode = 2
 step = 0.1
 value = 1.5
@@ -295,6 +296,7 @@ layout_mode = 2
 text = "句號權重:"
 
 [node name="SpinPeriod" type="SpinBox" parent="VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/HBoxParams"]
+unique_name_in_owner = true
 layout_mode = 2
 step = 0.1
 value = 3.0
@@ -335,14 +337,17 @@ theme_override_constants/separation = 20
 alignment = 1
 
 [node name="LblSRT" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "SRT: -"
 
 [node name="LblAudio" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Audio: -"
 
 [node name="LblStatus" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/InfoPanel/HBoxInfo"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Status: -"
 
@@ -356,12 +361,14 @@ layout_mode = 2
 theme_override_constants/separation = 30
 
 [node name="ChkAudio" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxMode"]
+unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 button_group = SubResource("ButtonGroup_mode")
 text = "依音訊時長 (By Audio)"
 
 [node name="ChkSRT" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxMode"]
+unique_name_in_owner = true
 layout_mode = 2
 button_group = SubResource("ButtonGroup_mode")
 text = "依譯文SRT時長 (By SRT)"
@@ -378,6 +385,7 @@ layout_mode = 2
 text = "影片:"
 
 [node name="LineVideo" type="LineEdit" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 editable = false
@@ -391,6 +399,7 @@ layout_mode = 2
 text = "原文 SRT:"
 
 [node name="LineSRT" type="LineEdit" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 editable = false
@@ -404,6 +413,7 @@ layout_mode = 2
 text = "音檔資料夾:"
 
 [node name="LineAudioFolder" type="LineEdit" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 editable = false
@@ -412,14 +422,16 @@ editable = false
 layout_mode = 2
 text = "瀏覽"
 
-[node name="Label4" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+[node name="LabelTrans" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "譯文 SRT:"
+text = "譯文:"
 
 [node name="LineTransSRT" type="LineEdit" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "(僅限SRT模式使用)"
+placeholder_text = "選擇 .txt 或 .srt"
 editable = false
 
 [node name="BtnTransSRT" type="Button" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/GridInputs"]
@@ -429,7 +441,7 @@ text = "瀏覽"
 [node name="LabelSettings" type="Label" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
-text = "畫質設定 (Settings)"
+text = "畫質與輸出設定 (Settings)"
 
 [node name="HBoxSettings" type="HBoxContainer" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
 layout_mode = 2
@@ -440,6 +452,7 @@ layout_mode = 2
 text = "目標 FPS:"
 
 [node name="SpinFPS" type="SpinBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxSettings"]
+unique_name_in_owner = true
 layout_mode = 2
 min_value = 24.0
 max_value = 144.0
@@ -451,8 +464,14 @@ suffix = "fps"
 layout_mode = 2
 
 [node name="ChkFlow" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxSettings"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "啟用 AI 補幀 (Optical Flow)"
+text = "AI 補幀 (Optical Flow)"
+
+[node name="ChkBurn" type="CheckBox" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox/HBoxSettings"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "燒錄翻譯字幕 (Burn-in)"
 
 [node name="Control" type="Control" parent="VBoxMain/TabContainer/2_影片對齊 (Video)/VBox"]
 layout_mode = 2
@@ -464,20 +483,112 @@ layout_mode = 2
 disabled = true
 text = "開始合成 (Start Sync)"
 
+[node name="3_素材串接 (Merger)" type="MarginContainer" parent="VBoxMain/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_tab_index = 3
+
+[node name="HBox" type="HBoxContainer" parent="VBoxMain/TabContainer/3_素材串接 (Merger)"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="VBoxLeft" type="VBoxContainer" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxLeft"]
+layout_mode = 2
+text = "檔案庫 (Files)"
+
+[node name="BtnAddFiles" type="Button" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxLeft"]
+layout_mode = 2
+text = "➕ 匯入檔案"
+
+[node name="FileList" type="ItemList" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxLeft"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BtnAddToSeq" type="Button" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxLeft"]
+layout_mode = 2
+text = "加入序列 >>"
+
+[node name="VBoxRight" type="VBoxContainer" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight"]
+layout_mode = 2
+text = "串接序列 (Sequence)"
+
+[node name="HBoxSeqTools" type="HBoxContainer" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight"]
+layout_mode = 2
+
+[node name="BtnSeqUp" type="Button" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight/HBoxSeqTools"]
+layout_mode = 2
+text = "⬆️"
+
+[node name="BtnSeqDown" type="Button" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight/HBoxSeqTools"]
+layout_mode = 2
+text = "⬇️"
+
+[node name="BtnSeqRemove" type="Button" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight/HBoxSeqTools"]
+layout_mode = 2
+text = "❌"
+
+[node name="BtnSortName" type="Button" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight/HBoxSeqTools"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "依檔名排序"
+
+[node name="SeqList" type="ItemList" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxOut" type="HBoxContainer" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight"]
+layout_mode = 2
+
+[node name="LineMergeOut" type="LineEdit" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight/HBoxOut"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "選擇輸出檔案 (merged.mp4)..."
+editable = false
+
+[node name="BtnBrowseMergeOut" type="Button" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight/HBoxOut"]
+layout_mode = 2
+text = "瀏覽"
+
+[node name="BtnMergeStart" type="Button" parent="VBoxMain/TabContainer/3_素材串接 (Merger)/HBox/VBoxRight"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "開始串接 (Merge)"
+
 [node name="ProgressBar" type="ProgressBar" parent="VBoxMain"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="LogOutput" type="RichTextLabel" parent="VBoxMain"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
 scroll_following = true
 
 [node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
 title = "Open a File"
 size = Vector2i(600, 400)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
 use_native_dialog = true
+
+[node name="PopupMenuTXT" type="PopupMenu" parent="."]
+unique_name_in_owner = true
