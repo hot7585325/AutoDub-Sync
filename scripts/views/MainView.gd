@@ -16,7 +16,7 @@ extends Control
 @onready var t1_opt_lang = %OptionLang
 @onready var t1_spin_comma = %SpinComma
 @onready var t1_spin_period = %SpinPeriod
-# 注意：以下一般按鈕如果沒設 Unique Name，仍需用路徑，但我已確認這些按鈕是固定的
+# 一般按鈕路徑
 @onready var t1_btn_start = $"VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/BtnSplitStart"
 @onready var t1_btn_xml = $"VBoxMain/TabContainer/1_音訊切割 (Audio)/VBox/BtnExportXML"
 
@@ -95,6 +95,7 @@ func _setup_tab0():
 	$"VBoxMain/TabContainer/0_文字對齊 (Aligner)/VBox/HBoxTools/BtnAutoSplit".pressed.connect(_on_t0_auto_split)
 	t0_text_txt.text_changed.connect(_on_t0_text_changed)
 	
+	# 連接點擊事件 (用於同步反白)
 	t0_text_srt.gui_input.connect(_on_t0_srt_input)
 	t0_text_txt.gui_input.connect(_on_t0_txt_input)
 	
@@ -138,6 +139,7 @@ func _on_t0_auto_split():
 	for i in range(chars.length()):
 		var c = chars[i]
 		txt = txt.replace(c, c + "\n")
+	# 清理空行
 	var lines = txt.split("\n", false)
 	t0_text_txt.text = "\n".join(lines)
 	_on_t0_text_changed()
@@ -154,28 +156,59 @@ func _on_t0_text_changed():
 		t0_lbl_status.text = "狀態: ❌ 差異 %d" % (c - t0_srt_lines_count)
 		t0_lbl_status.modulate = Color.RED
 
+# --- Tab 0 Logic 更新版 ---
+
 func _on_t0_srt_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var line = t0_text_srt.get_caret_line()
-		_sync_highlight(line)
+		# 使用 call_deferred 等待點擊完成，確保讀到的是"新"的游標位置
+		call_deferred("_deferred_sync", true)
 
 func _on_t0_txt_input(event):
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			var line = t0_text_txt.get_caret_line()
-			_sync_highlight(line)
+			call_deferred("_deferred_sync", false)
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			t0_popup_txt.position = get_global_mouse_position()
 			t0_popup_txt.popup()
 
-func _sync_highlight(line):
+# 新增的中介函式，負責在下一幀讀取正確行數
+func _deferred_sync(is_srt_active):
+	var line = 0
+	if is_srt_active:
+		line = t0_text_srt.get_caret_line()
+	else:
+		line = t0_text_txt.get_caret_line()
+	
+	_sync_highlight(line, is_srt_active)
+
+func _sync_highlight(line, is_srt_active):
+	# 1. 處理左邊 (SRT)
 	if line < t0_text_srt.get_line_count():
-		t0_text_srt.set_caret_line(line)
-		t0_text_srt.center_viewport_to_caret()
+		# 如果 SRT 是被動的 (我們點的是 TXT)，才需要強制移動 SRT 的視角與游標
+		if not is_srt_active:
+			t0_text_srt.set_caret_line(line)
+			t0_text_srt.center_viewport_to_caret()
 		
+		# 無論主動被動，都進行全行選取反白 (藍色背景)
+		var srt_line_text = t0_text_srt.get_line(line)
+		# 注意：select 會移動游標到選取尾端，這對唯讀的 SRT 沒影響，視覺上就是反白
+		t0_text_srt.select(line, 0, line, srt_line_text.length())
+		
+	# 2. 處理右邊 (TXT)
 	if line < t0_text_txt.get_line_count():
-		t0_text_txt.set_caret_line(line)
-		t0_text_txt.center_viewport_to_caret()
+		# 如果 TXT 是被動的 (我們點的是 SRT)，才強制移動
+		if is_srt_active:
+			t0_text_txt.set_caret_line(line)
+			t0_text_txt.center_viewport_to_caret()
+			
+			# 被動狀態下，幫忙全選該行，方便查看
+			var txt_line_text = t0_text_txt.get_line(line)
+			t0_text_txt.select(line, 0, line, txt_line_text.length())
+		else:
+			# 如果 TXT 是主動的 (我們正在點它準備編輯)，
+			# 千萬 "不要" 使用 select() 全選整行，否則你一打字就會把整行覆蓋掉！
+			# 這裡我們只清除之前的選取，讓使用者專心編輯
+			t0_text_txt.deselect()
 
 func _on_t0_popup_item(id):
 	if id == 0:
@@ -185,7 +218,9 @@ func _on_t0_popup_item(id):
 
 # --- Tab 1 Logic ---
 func _run_splitter(is_xml_only, xml_path=""):
-	if t1_line_audio.text.is_empty() or t1_line_txt.text.is_empty(): return
+	if t1_line_audio.text.is_empty() or t1_line_txt.text.is_empty(): 
+		_log("錯誤: 請輸入檔案")
+		return
 	t1_btn_start.disabled = true
 	var p = AudioSplitter.SplitParams.new()
 	p.comma_weight = t1_spin_comma.value
